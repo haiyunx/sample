@@ -35,7 +35,7 @@ class SessionsController extends Controller
             }else{
                 Auth::logout();
                 session()->flash('warning', 'You account has not been activated, please chek your email box.');
-                return refirect('/');
+                return redirect('/');
             }
         }else{
             session()->flash('danger', 'Sorry your email/password do not match');

@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Models\User;
 use Auth;
 use Mail;
+use App\Notifications\ResetPassword;
 
 class UsersController extends Controller
 {
@@ -63,13 +64,11 @@ class UsersController extends Controller
     {
         $view = 'emails.confirm';
         $data = compact('user');
-        $from = 'aufree@yousails.com';
-        $name = 'Aufree';
         $to = $user->email;
         $subject = "Thanks for register XXX website! Please confirm your email address!";
 
-        Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
-            $message->from($from, $name)->to($to)->subject($subject);
+        Mail::send($view, $data, function ($message) use ($to, $subject) {
+            $message->to($to)->subject($subject);
         });
     }
 
@@ -84,6 +83,11 @@ class UsersController extends Controller
         Auth::login($user);
         session()->flash('success', 'Congratulations, activation successfully！');
         return redirect()->route('users.show', [$user]);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 
     public function edit(User $user)
